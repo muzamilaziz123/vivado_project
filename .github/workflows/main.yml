@@ -1,0 +1,23 @@
+name: Vivado Synthesis
+
+on: [push, pull_request]
+
+jobs:
+  synthesize:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v2
+
+    - name: Install Vivado
+      run: |
+        # You need to set up Vivado. Here we use Xilinx’s Docker image for Vivado.
+        docker pull xilinx/vivado:2024.1
+        docker run --name vivado -d xilinx/vivado:2024.1
+
+    - name: Run Vivado Synthesis
+      run: |
+        docker exec vivado /bin/bash -c "source /opt/Xilinx/Vivado/2024.1/settings64.sh; \
+        cd AXI_DMA; \
+        vivado -mode batch -source synth.tcl"
